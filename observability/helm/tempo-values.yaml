@@ -1,0 +1,5 @@
+tempo:
+  retention: 48h
+persistence:
+  enabled: true
+  size: 5Gi

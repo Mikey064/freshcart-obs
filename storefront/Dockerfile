@@ -11,9 +11,12 @@ COPY . .
 RUN npm run build
 
 # STAGE 2: Runtime
-FROM nginx:1.29-alpine AS final
+FROM nginx:1.29-alpine-otel AS final
 
 RUN apk update && apk upgrade --no-cache
+
+
+RUN sed -i '1i load_module modules/ngx_otel_module.so;' /etc/nginx/nginx.conf
 
 COPY --from=build /app/dist /usr/share/nginx/html
 

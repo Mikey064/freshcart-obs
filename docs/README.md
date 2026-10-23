@@ -87,7 +87,7 @@ kubectl create secret generic checkout-db-secret \
   --namespace freshcart \
   --from-literal=DATABASE_URL="postgres://<username>:<password>@postgres:5432/freshcart"
 
-kubectl apply -f manifests/
+kubectl apply -f k8s/
 kubectl -n freshcart get pods,svc,ingress,hpa
 ```
 

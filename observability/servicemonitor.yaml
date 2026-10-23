@@ -1,0 +1,22 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+
+metadata:
+  name: checkout-api
+  namespace: freshcart
+  labels: 
+    release: kube-prometheus-stack
+
+spec:
+  selector:
+    matchLabels:
+      app: checkout-api
+  
+  namespaceSelector:
+    matchNames: 
+      - freshcart
+
+  endpoints:
+    - port: http 
+      path: /metrics 
+      interval: 15s

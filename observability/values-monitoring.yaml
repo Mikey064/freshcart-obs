@@ -1,0 +1,23 @@
+grafana:
+  adminPassword: "freshcart"
+  persistence: { enabled: false }
+
+prometheus:
+  prometheusSpec:
+    retention: 2d
+    serviceMonitorSelecctorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    resources:
+      requests: { cpu: 200m, memory: 600Mi }
+      limits: { memory: 1200Mi }
+
+alertManager:
+  alertManagerSpec:
+    resources:
+      requests: { cpu: 25m, memory: 64Mi }
+
+kubeEtcd:              { enabled: false }
+kubeControllerManager: { enabled: false }
+kubeScheduler:         { enabled: false }
+kubeProxy:             { enabled: false }

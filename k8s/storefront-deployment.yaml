@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: storefront
-          image: us-central1-docker.pkg.dev/freshcart-twotier/freshcart-repo/storefront:v1.1
+          image: us-central1-docker.pkg.dev/freshcart-twotier/freshcart-repo/storefront:v2
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080

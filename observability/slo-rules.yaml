@@ -1,0 +1,45 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+
+metadata:
+  name: checkout-api-slo
+  namespace: monitoring
+  labels: { release: kube-prometheus-stack }
+
+spec:
+  groups:
+    - name: checkout-api-sli
+      rules:
+        - record: checkout_api:error_ratio_5m
+          expr: |
+            (sum(rate(http_requests_total{job="checkout-api",status=~"5..",route!~".*healthz.*|/metrics"}[5m])) or vector(0))
+            / sum(rate(http_requests_total{job="checkout-api",route!~".*healthz.*|/metrics"}[5m]))
+        - record: checkout_api:error_ratio_1h
+          expr: |
+            (sum(rate(http_requests_total{job="checkout-api",status=~"5..",route!~".*healthz.*|/metrics"}[1h])) or vector(0))
+            / sum(rate(http_requests_total{job="checkout-api",route!~".*healthz.*|/metrics"}[1h]))
+        - record: checkout_api:slow_ratio_5m
+          expr: |
+            1 - (sum(rate(http_request_duration_seconds_bucket{job="checkout-api",le="0.5",route!~".*healthz.*|/metrics"}[5m]))
+            / sum(rate(http_request_duration_seconds_count{job="checkout-api",route!~".*healthz.*|/metrics"}[5m])))
+        - record: checkout_api:slow_ratio_30m
+          expr: |
+            1 - (sum(rate(http_request_duration_seconds_bucket{job="checkout-api",le="0.5",route!~".*healthz.*|/metrics"}[30m]))
+            / sum(rate(http_request_duration_seconds_count{job="checkout-api",route!~".*healthz.*|/metrics"}[30m])))
+    
+    - name: checkout-api-slo-alerts
+      rules:
+        - alert: CheckoutApiAvailabilityFastBurn
+          expr: checkout_api:error_ratio_1h > 0.072 and checkout_api:error_ratio_5m > 0.072
+          for: 2m
+          labels: { severity: page }
+          annotations:
+            summary: "checkout-api is burning its 99.5% availability budget at >14.4x"
+            runbook: "docs/runbook-availability-burn.md"
+        - alert: CheckoutApiLatencyBurn
+          expr: checkout_api:slow_ratio_30m > 0.30 and checkout_api:slow_ratio_5m > 0.30
+          for: 2m
+          labels: { severity: ticket }
+          annotations:
+            summary: "checkout-api is burning its 95% <500ms latency budget at >6x"
+            runbook: "docs/runbook-availability-burn.md" 

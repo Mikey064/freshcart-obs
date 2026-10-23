@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: checkout-api
-          image:  us-central1-docker.pkg.dev/freshcart-twotier/freshcart-repo/checkout-api:v1.1
+          image:  us-central1-docker.pkg.dev/freshcart-twotier/freshcart-repo/checkout-api:v2
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
@@ -27,6 +27,10 @@ spec:
                 secretKeyRef:
                   name: checkout-api-db
                   key: DATABASE_URL
+            - name: OTEL_TRACES_URL
+              value: "http://jaeger:4318/v1/traces"
+            - name: DB_POOL_MAX
+              value: "10"
 
           readinessProbe:
             httpGet: 

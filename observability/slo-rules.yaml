@@ -42,4 +42,7 @@ spec:
           labels: { severity: ticket }
           annotations:
             summary: "checkout-api is burning its 95% <500ms latency budget at >6x"
-            runbook: "docs/runbook-availability-burn.md" 
+            runbook: "docs/runbook-availability-burn.md"
+        - alert: CheckoutApiDBPoolSaturated
+          expr: max(db_pool_waiting{job="checkout-api"}) > 0 
+          for: 2m

@@ -150,7 +150,15 @@ The database-pool alert is intended to provide an earlier signal of dependency s
 
 ## The incident exercise
 
-The final test deliberately introduces a controlled fault into `checkout-api`. The purpose is to verify that monitoring can detect customer-facing impact and that logs, traces, and the runbook can support investigation and recovery.
+The final test deliberately introduces a controlled fault into `checkout-api`. The purpose is to verify that monitoring can detect customer-facing impact and that logs, traces, and the runbook can support investigation and recovery. Before introducing the fault, I used `hey` to generate a consistent trafic. This helps to prove that there were requests bing handled when it broke.
+The command used:
+```bash
+# Forward stoefront to a browser
+kubectl -n freshcart port-forward svc/storefront 8080:80
+# another terminal:
+hey -z 20m -c 10 -q 1 http://localhost:8080/api/products
+```
+
 
 ### Fault injection
 
